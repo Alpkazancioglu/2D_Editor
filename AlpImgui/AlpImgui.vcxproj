@@ -131,12 +131,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameObjects.cpp" />
+    <ClCompile Include="imguistyle.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SaveHandler.cpp" />
     <ClCompile Include="VectorMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjects.h" />
+    <ClInclude Include="imguistyle.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="rlImGui.h" />
     <ClInclude Include="SaveHandler.h" />

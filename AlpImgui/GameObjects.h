@@ -1,17 +1,28 @@
 #pragma once
+#include <iostream>
 #include "raylib.h"
 #include <vector>
 #include <string>
+#include "Imgui/imgui.h"
+#include <unordered_map>
 #define stringify( name ) #name
 
 enum numbers {first,second,third,fourth,fifth};
 
 const char* toString(numbers name);
 
+//enum Focus { Hitboxs, Objects, SelectedHitbox, SelectedObject };
 
 
+struct Focus
+{
+	int Hitboxs = 0;
+	int Objects = 1;
+	int SelectedHitbox = 2;
+	int SelectedObject = 3;
 
 
+};
 
 struct Circle
 {
@@ -70,9 +81,7 @@ class ObjectData
 {
 public:
 
-	std::vector<Rectanglex> recs;
-	std::vector<Circle> circles;
-	std::vector<Triangle> triangles;
+	
 	Vector2 pos;
 	
 
@@ -88,7 +97,9 @@ class CollisionBoxs
 {
 public:
 
-	ObjectData Data;
+	std::vector<Rectanglex> recs;
+	std::vector<Circle> circles;
+	std::vector<Triangle> triangles;
 	bool ShowAllHitboxs = true;
 
 };
@@ -100,7 +111,9 @@ class GameObject
 public:
 	GameObject();
 	GameObject(std::string name);
-	
+	GameObject(char name);
+	~GameObject();
+	std::string ObjectName;
 
 	ObjectData Data;
 	CollisionBoxs Hitbox;
@@ -111,6 +124,8 @@ public:
 	void MoveObject(unsigned int value = 10);
 	void ResetHitbox();
 	
+	void ShowHitbox(bool active = false);
+
 
 
 
@@ -118,5 +133,6 @@ public:
 
 };
 
+void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object);
 
 
