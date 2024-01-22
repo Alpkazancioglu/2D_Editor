@@ -5,6 +5,8 @@
 #include <string>
 #include "Imgui/imgui.h"
 #include <unordered_map>
+#include "imguistyle.h"
+#include "WarningHandler.h"
 #define stringify( name ) #name
 
 enum numbers {first,second,third,fourth,fifth};
@@ -132,7 +134,7 @@ public:
 
 
 };
-
-void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object);
+std::string  GetRelativePath(std::string TextureName);
+Enum_WarningStatus CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object);
 
 

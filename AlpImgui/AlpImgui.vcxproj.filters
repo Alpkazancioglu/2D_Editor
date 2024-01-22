@@ -30,6 +30,9 @@
     <ClCompile Include="imguistyle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WarningHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjects.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="imguistyle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WarningHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

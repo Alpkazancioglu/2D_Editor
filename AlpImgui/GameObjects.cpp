@@ -25,6 +25,7 @@ GameObject::~GameObject()
 
 void GameObject::MoveHitbox(unsigned int value, numbers name)
 {
+	if(!this->Hitbox.recs.empty())
 	if (IsKeyDown(KEY_D)) this->Hitbox.recs[name].x += value;
 	else if (IsKeyDown(KEY_A)) this->Hitbox.recs[name].x -= value;
 	else if (IsKeyDown(KEY_W)) this->Hitbox.recs[name].y -= value;
@@ -55,16 +56,8 @@ void GameObject::ResetHitbox()
 	}
 }
 
-void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object)
+std::string GetRelativePath(std::string TextureName)
 {
-	
-	active = true;
-
-	static char ObjectName[20] = {};
-	static char TextureName[20] = {};
-	char localpath[] = "C:\\Users\\user\\Desktop\\main()\\projects\\AlpImgui\\AlpImgui\\AlpImgui\\Textures\\";
-	ImGui::InputText("Object Name", ObjectName, IM_ARRAYSIZE(ObjectName));
-	ImGui::InputText("Texture Name", TextureName, IM_ARRAYSIZE(TextureName));
 	std::string WorkingDir(GetWorkingDirectory());
 
 	for (size_t i = 0; i < WorkingDir.size(); i++)
@@ -73,7 +66,21 @@ void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& 
 			WorkingDir.at(i) = '/';
 		}
 	}
-	std::string TexturePath(WorkingDir + "/Textures/" + TextureName+ ".png");
+	 std::string TexturePath(WorkingDir + "/Textures/" + TextureName + ".png");
+	 return TexturePath;
+}
+
+Enum_WarningStatus CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object)
+{
+	
+	active = true;
+
+	bool PopUpClosed = true;
+	static char ObjectName[20] = {};
+	static char TextureName[20] = {};
+	ImGui::InputText("Object Name", ObjectName, IM_ARRAYSIZE(ObjectName));
+	ImGui::InputText("Texture Name", TextureName, IM_ARRAYSIZE(TextureName));
+	std::string TexturePath = GetRelativePath(TextureName);
 	
 	
 	if(ImGui::Button("Create"))
@@ -82,20 +89,32 @@ void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& 
 		{
 			object[ObjectName] = GameObject(ObjectName);
 			object[ObjectName].Texture = LoadTexture(TexturePath.c_str());
-			if(!IsTextureReady(object[ObjectName].Texture))
-			{
+			if (!IsTextureReady(object[ObjectName].Texture))
+			{	
 				object.erase(ObjectName);
+				*ObjectName = {};
+				*TextureName = {};
+				active = false;
+				return TextureFailed;
 			}
+			else active = false;
 			
+
 		}
 		else
 		{
-			
 			std::cout << "object already created" << std::endl;
+			*ObjectName = {};
+			*TextureName = {};
+			active = false;
+			return ObjectFailed;
+			
 		}
 		*ObjectName = {};
 		*TextureName = {};
 		active = false;
+		return Succeed;
+		
 	}
 	
 	ImGui::SameLine();
@@ -104,10 +123,11 @@ void CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& 
 		*ObjectName = {};
 		*TextureName = {};
 		active = false;
+		return Succeed;
 		
 	}
 	ImGui::Spacing();
-	
+	return Succeed;
 
 
 	
