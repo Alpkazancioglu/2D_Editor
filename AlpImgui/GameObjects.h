@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 #include "Imgui/imgui.h"
-#include <unordered_map>
+#include <map>
 #include "imguistyle.h"
 #include "WarningHandler.h"
+
 #define stringify( name ) #name
+#define PRINT_VARIABLE(x) std::cout << #x"=" << x << std::endl
+
 
 enum numbers {first,second,third,fourth,fifth};
 
@@ -85,12 +88,14 @@ public:
 
 	
 	Vector2 pos;
+	float TextureScale = 1.0f;
+	float rotation = 0.0f;
 	
-
+	
 	
 	ObjectData()
 	{
-
+		
 	}
 
 };
@@ -120,7 +125,8 @@ public:
 	ObjectData Data;
 	CollisionBoxs Hitbox;
 	Texture2D Texture;
-	
+	unsigned int Id = 0;
+	int RenderQueue;
 	bool ShouldHitboxDisplay = false;
 	void MoveHitbox(unsigned int value = 10,numbers name = first);
 	void MoveObject(unsigned int value = 10);
@@ -128,13 +134,37 @@ public:
 	
 	void ShowHitbox(bool active = false);
 
+	/*bool operator>(const GameObject& other) const
+	{
+		return this->Data.RenderQueue > other.Data.RenderQueue;
+	}
+	bool operator<(const GameObject& other) const
+	{
+		return this->Data.RenderQueue < other.Data.RenderQueue;
+	}
 
+	bool operator<=(const GameObject& other) const
+	{
+		return this->Data.RenderQueue <= other.Data.RenderQueue;
+	}
+	bool operator>=(const GameObject& other) const
+	{
+		return this->Data.RenderQueue >= other.Data.RenderQueue;
+	}*/
 
 
 
 
 };
+
+void DrawObjects(std::map<std::string, GameObject>& objects,bool DrawAll = true);
+void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
+void SelectHitboxWithMouse(GameObject*& SelectedObject, numbers& HitboxFocus);
+void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer);
+bool CollisionMouseWithRec(Vector2 mouse, ObjectData object, Texture2D Texture);
+bool CollisionMouseWithRec(Vector2 mouse, Rectanglex rec);
+void SetPrioarity(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 std::string  GetRelativePath(std::string TextureName);
-Enum_WarningStatus CreateNewObject(bool& active, std::unordered_map<std::string, GameObject>& object);
+Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObject>& object);
 
 
