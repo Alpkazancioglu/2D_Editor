@@ -41,9 +41,6 @@
     <ClInclude Include="SaveHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rlImGui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -55,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="WarningHandler.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rlImGui.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

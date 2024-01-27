@@ -5,16 +5,17 @@
 #include <string>
 #include "Imgui/imgui.h"
 #include <map>
-#include "imguistyle.h"
 #include "WarningHandler.h"
+#include "rlgl.h"
+#include "raymath.h"
 
 #define stringify( name ) #name
 #define PRINT_VARIABLE(x) std::cout << #x"=" << x << std::endl
 
-
-enum numbers {first,second,third,fourth,fifth};
+enum numbers { first, second, third, fourth, fifth };
 
 const char* toString(numbers name);
+
 
 //enum Focus { Hitboxs, Objects, SelectedHitbox, SelectedObject };
 
@@ -109,6 +110,7 @@ public:
 	std::vector<Triangle> triangles;
 	bool ShowAllHitboxs = true;
 
+
 };
 
 
@@ -128,6 +130,8 @@ public:
 	unsigned int Id = 0;
 	int RenderQueue;
 	bool ShouldHitboxDisplay = false;
+	bool ShouldObjectOrHitboxMove = true;
+	
 	void MoveHitbox(unsigned int value = 10,numbers name = first);
 	void MoveObject(unsigned int value = 10);
 	void ResetHitbox();
@@ -157,8 +161,9 @@ public:
 
 };
 
-void DrawObjects(std::map<std::string, GameObject>& objects,bool DrawAll = true);
-void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
+
+void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll = true);
+void DrawHitboxs(const std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
 void SelectHitboxWithMouse(GameObject*& SelectedObject, numbers& HitboxFocus);
 void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer);
 bool CollisionMouseWithRec(Vector2 mouse, ObjectData object, Texture2D Texture);

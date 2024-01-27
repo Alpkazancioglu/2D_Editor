@@ -13,6 +13,7 @@ GameObject::GameObject(std::string name)
 	this->RenderQueue = Iterator;
 	Id = Iterator;
 	Iterator++;
+	
 }
 
 GameObject::GameObject(char name)
@@ -149,7 +150,7 @@ void SetPrioarity(std::map<std::string, GameObject>& objects,GameObject* &Select
 }
 
 
-void DrawObjects(std::map<std::string, GameObject>& objects,bool DrawAll)
+void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll)
 {
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -167,7 +168,7 @@ void DrawObjects(std::map<std::string, GameObject>& objects,bool DrawAll)
 	}
 }
 
-void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll)
+void DrawHitboxs(const std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll)
 {
 	if(!DrawAll)
 	{
@@ -354,19 +355,7 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 }
 
 
-void DebugConsole(GameObject& object)
-{
-	static std::string temp;
-	if (ImGui::BeginMenu(object.ObjectName.c_str()))
-	{
-		
 
-
-
-		ImGui::EndMenu();
-	}
-
-}
 
 
 

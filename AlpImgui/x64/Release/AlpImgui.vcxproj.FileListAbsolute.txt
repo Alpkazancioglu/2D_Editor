@@ -1,3 +1,0 @@
-C:\Users\kbald\source\repos\AlpImgui\AlpImgui\x64\Release\AlpImgui.vcxproj.CopyComplete
-C:\Users\user\Desktop\main()\projects\AlpImgui\AlpImgui\AlpImgui\x64\Release\AlpImgui.vcxproj.CopyComplete
-C:\Users\user\Documents\GitHub\2D_Editor\AlpImgui\x64\Release\AlpImgui.vcxproj.CopyComplete

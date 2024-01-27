@@ -5,7 +5,7 @@
 
 
 
-void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool& active ,bool Sameline)
+void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,bool Sameline)
 {
     
     static bool temp = !active;
@@ -23,37 +23,79 @@ void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool& active ,bool
 
 }
 
-void ImGui::ToggleButton(const char* str_id, bool* v)
+
+
+void ImGui::ObjectMenu(std::map<std::string, GameObject> &objects, GameObject* &SelectedObject)
 {
-    ImVec2 p = ImGui::GetCursorScreenPos();
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-    float height = ImGui::GetFrameHeight();
-    float width = height * 1.55f;
-    float radius = height * 0.50f;
-
-    ImGui::InvisibleButton(str_id, ImVec2(width, height));
-    if (ImGui::IsItemClicked())
-        *v = !*v;
-
-    float t = *v ? 1.0f : 0.0f;
-
-    ImGuiContext& g = *GImGui;
-    float ANIM_SPEED = 0.08f;
-    if (g.LastActiveId == g.CurrentWindow->GetID(str_id))// && g.LastActiveIdTimer < ANIM_SPEED)
+    static ImVec2 alpinowindowsize = {};
+    
+    
+    ImGui::SetNextWindowPos({ GetScreenWidth() - alpinowindowsize.x,0 });
+    if (ImGui::Begin("alpino", (bool*)0, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
-        t = *v ? (t_anim) : (1.0f - t_anim);
+        ImGui::Checkbox("Show Hitbox", &SelectedObject->ShouldHitboxDisplay);
+        ImGui::SameLine();
+        if (ImGui::Button("Reset Hitbox")) SelectedObject->ResetHitbox();
+        ImGui::SameLine();
+        ImGui::SwitchBox("Object", "Hitbox", SelectedObject->ShouldObjectOrHitboxMove);
+        ImGui::SliderFloat("Increase Value", &SelectedObject->Data.TextureScale, 0.0f, 20.0f);
+
+        if (ImGui::Button("Add Rec"))
+        {
+            SelectedObject->Hitbox.recs.push_back(Rectanglex(numbers(SelectedObject->Hitbox.recs.size()), 400, 200, SelectedObject->Texture.width, SelectedObject->Texture.height));
+        }
+
+        static std::string name_RecSelector = "rec";
+        if (!SelectedObject->Hitbox.recs.empty() && ImGui::BeginMenu(name_RecSelector.c_str()))
+        {
+            for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
+            {
+                if (ImGui::MenuItem(toString(SelectedObject->Hitbox.recs[i].name)))
+                {
+                    name_RecSelector = toString(SelectedObject->Hitbox.recs[i].name);
+                }
+            }
+            ImGui::EndMenu();
+        }
+
+        for(auto& object : objects)
+        {
+            object.second.ShouldObjectOrHitboxMove = SelectedObject->ShouldObjectOrHitboxMove;
+        }
+
+        alpinowindowsize = ImGui::GetWindowSize();
+        ImGui::End();
     }
-
-    ImU32 col_bg;
-    if (ImGui::IsItemHovered())
-        col_bg = ImGui::GetColorU32(ImLerp(ImVec4(0.78f, 0.78f, 0.78f, 1.0f), ImVec4(0.64f, 0.83f, 0.34f, 1.0f), t));
-    else
-        col_bg = ImGui::GetColorU32(ImLerp(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), ImVec4(0.56f, 0.83f, 0.26f, 1.0f), t));
-
-    draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), col_bg, height * 0.5f);
-    draw_list->AddCircleFilled(ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
 }
+
+void ImGui::GeneralMenu(std::map<std::string, GameObject>& GameObjects, GameObject*& SelectedObject ,Enum_WarningStatus &WarningLevel)
+{
+    ImGui::SetNextWindowPos({ 0,0 });
+    if (ImGui::Begin("Hello", (bool*)0, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize))
+    {
+
+        ImGui::Text("AlpImgui1");
+        ImGui::Separator();
+        if (ImGui::BeginCombo("Selected Object", SelectedObject->ObjectName.c_str()))
+        {
+            for (auto& object : GameObjects)
+            {
+                if (ImGui::Selectable(object.second.ObjectName.c_str()))
+                {
+                    SelectedObject = &object.second;
+                }
+            }
+            ImGui::EndCombo();
+        }
+        static bool ShouldObjectCreated = false;
+        if ((ImGui::Button("Add Objects") || ShouldObjectCreated))
+        {
+            WarningLevel = CreateNewObject(ShouldObjectCreated, GameObjects);
+        }
+
+
+    }ImGui::End();
+}
+
 
 
