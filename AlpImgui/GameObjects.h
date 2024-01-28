@@ -89,6 +89,7 @@ public:
 
 	
 	Vector2 pos;
+	Vector2 OriginalTextureSize;
 	float TextureScale = 1.0f;
 	float rotation = 0.0f;
 	
@@ -108,6 +109,7 @@ public:
 	std::vector<Rectanglex> recs;
 	std::vector<Circle> circles;
 	std::vector<Triangle> triangles;
+	bool Locked = false;
 	bool ShowAllHitboxs = true;
 
 
@@ -131,11 +133,12 @@ public:
 	int RenderQueue;
 	bool ShouldHitboxDisplay = false;
 	bool ShouldObjectOrHitboxMove = true;
-	
+	bool Locked;
+
 	void MoveHitbox(unsigned int value = 10,numbers name = first);
 	void MoveObject(unsigned int value = 10);
 	void ResetHitbox();
-	
+	void UpdateTextureSize();
 	void ShowHitbox(bool active = false);
 
 	/*bool operator>(const GameObject& other) const

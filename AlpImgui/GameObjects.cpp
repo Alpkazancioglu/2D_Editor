@@ -13,6 +13,8 @@ GameObject::GameObject(std::string name)
 	this->RenderQueue = Iterator;
 	Id = Iterator;
 	Iterator++;
+	this->Locked = false;
+	
 	
 }
 
@@ -152,6 +154,8 @@ void SetPrioarity(std::map<std::string, GameObject>& objects,GameObject* &Select
 
 void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll)
 {
+	
+	
 	for (int i = 0; i < objects.size(); i++)
 	{
 		static int j = 0;
@@ -159,7 +163,7 @@ void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll)
 		{
 			if (object.second.RenderQueue == j)
 			{
-				DrawTextureEx(object.second.Texture, object.second.Data.pos, object.second.Data.rotation, object.second.Data.TextureScale, WHITE);
+				DrawTextureEx(object.second.Texture, object.second.Data.pos, object.second.Data.rotation,1, WHITE);
 				j++;
 				break;
 			}
@@ -232,13 +236,13 @@ void SelectHitboxWithMouse(GameObject* &SelectedObject, numbers& HitboxFocus)
 
 void GameObject::MoveObject(unsigned int value)
 {
-	if (IsKeyDown(KEY_D)) this->Data.pos.x += value;
-	else if (IsKeyDown(KEY_A)) this->Data.pos.x -= value;
-	else if (IsKeyDown(KEY_W)) this->Data.pos.y -= value;
-	else if (IsKeyDown(KEY_S)) this->Data.pos.y += value;
+	if (IsKeyDown(KEY_D)) Data.pos.x += value;
+	else if (IsKeyDown(KEY_A)) Data.pos.x -= value;
+	else if (IsKeyDown(KEY_W)) Data.pos.y -= value;
+	else if (IsKeyDown(KEY_S)) Data.pos.y += value;
 	
 	static bool hold = false;
-	if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },this->Data,this->Texture) || hold)
+	if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },Data,Texture) || hold)
 	{
 
 
@@ -255,8 +259,8 @@ void GameObject::MoveObject(unsigned int value)
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 		{
 			//std::cout << HoldPosition.x << std::endl;
-			this->Data.pos.x = mouse.x - (HoldMousePosition.x - HoldTexturePosition.x);
-			this->Data.pos.y = mouse.y - (HoldMousePosition.y - HoldTexturePosition.y);
+			Data.pos.x = mouse.x - (HoldMousePosition.x - HoldTexturePosition.x);
+			Data.pos.y = mouse.y - (HoldMousePosition.y - HoldTexturePosition.y);
 			hold = true;
 		}
 		else hold = false;
@@ -270,10 +274,10 @@ void GameObject::ResetHitbox()
 {
 	for (int i = 0; i < this->Hitbox.recs.size(); i++)
 	{
-		this->Hitbox.recs[i].x = this->Data.pos.x;
-		this->Hitbox.recs[i].y = this->Data.pos.y;
-		this->Hitbox.recs[i].width = this->Texture.width*this->Data.TextureScale;
-		this->Hitbox.recs[i].height = this->Texture.height*this->Data.TextureScale;
+		Hitbox.recs[i].x = Data.pos.x;
+		Hitbox.recs[i].y = Data.pos.y;
+		Hitbox.recs[i].width = Texture.width*Data.TextureScale;
+		Hitbox.recs[i].height = Texture.height*Data.TextureScale;
 	}
 }
 
@@ -318,6 +322,8 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 				return TextureFailed;
 			}
 			else active = false;
+			object[ObjectName].Data.OriginalTextureSize = { (float)object[ObjectName].Texture.width,(float)object[ObjectName].Texture.height };
+			
 			
 
 		}
@@ -361,6 +367,14 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 
 void GameObject::ShowHitbox(bool active)
 {
+}
+
+void GameObject::UpdateTextureSize()
+{
+	
+	Texture.width = Data.OriginalTextureSize.x * Data.TextureScale;
+	Texture.height = Data.OriginalTextureSize.y * Data.TextureScale;
+
 }
 
 const char* toString(numbers name)

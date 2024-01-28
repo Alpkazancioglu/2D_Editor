@@ -34,6 +34,7 @@ int main()
 
     GameObjects["wood"] = GameObject("wood");
     GameObjects["wood"].Texture = LoadTexture(GetRelativePath("wood").c_str());
+    GameObjects["wood"].Data.OriginalTextureSize = { (float)GameObjects["wood"].Texture.width,(float)GameObjects["wood"].Texture.height };
     SelectedObject = &GameObjects["wood"];
 
 
@@ -49,14 +50,17 @@ int main()
 
         ClearBackground(GRAY);
         rlImGuiBegin();
-
+        
+      
        
         Warning::WarningHandler(WarningLevel);
         
         
         ImGui::GeneralMenu(GameObjects, SelectedObject,WarningLevel);
-        ImGui::ObjectMenu(GameObjects,SelectedObject);
+        //ImGui::TextureMenu(GameObjects,SelectedObject);
+        //ImGui::ShowDemoWindow();
         
+        ImGui::ObjectMenu(GameObjects, SelectedObject);
         SetPrioarity(GameObjects, SelectedObject);
         SelectObjectWithMouse(GameObjects, SelectedObject);
         SelectHitboxWithMouse(SelectedObject, HitboxFocus);
@@ -72,6 +76,7 @@ int main()
         
 
         rlImGuiEnd();
+        
         EndDrawing();
 
 
