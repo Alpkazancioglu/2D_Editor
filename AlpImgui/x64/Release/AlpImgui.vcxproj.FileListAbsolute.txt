@@ -1,0 +1,1 @@
+C:\Users\alppk\Documents\GitHub\2D_Editor\AlpImgui\x64\Release\AlpImgui.vcxproj.CopyComplete

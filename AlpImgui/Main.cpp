@@ -18,26 +18,25 @@ int main()
 
     const int screenWidth = 1200;
     const int screenHeight = 800;
-    enum Focus { Object, Hitboxs, allObjects };
-    std::string Name_ObjectSelector = "Object";
-    std::string temp1 = "rec";
-    int focus = 0;
-    Enum_WarningStatus WarningLevel = Succeed;
-    numbers HitboxFocus = first;
+   
     
-    int IncreaseValue = 10.0f;
+    Enum_WarningStatus WarningLevel = Succeed;
+    
+
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
     std::map<std::string, GameObject> GameObjects;
     GameObject* SelectedObject;
-
+    
     GameObjects["wood"] = GameObject("wood");
     GameObjects["wood"].Texture = LoadTexture(GetRelativePath("wood").c_str());
     GameObjects["wood"].Data.OriginalTextureSize = { (float)GameObjects["wood"].Texture.width,(float)GameObjects["wood"].Texture.height };
+    GameObjects["wood"].RenderQueue = 0;
+    
     SelectedObject = &GameObjects["wood"];
-
-
+    
+    
 
     SetTargetFPS(60);
     SetWindowState(FLAG_WINDOW_RESIZABLE);
@@ -51,34 +50,34 @@ int main()
         ClearBackground(GRAY);
         rlImGuiBegin();
         
-      
-       
         Warning::WarningHandler(WarningLevel);
         
         
-        ImGui::GeneralMenu(GameObjects, SelectedObject,WarningLevel);
-        //ImGui::TextureMenu(GameObjects,SelectedObject);
-        //ImGui::ShowDemoWindow();
-        
-        ImGui::ObjectMenu(GameObjects, SelectedObject);
+       
+        //std::cout << SelectedObject->RenderQueue << std::endl;
         SetPrioarity(GameObjects, SelectedObject);
-        SelectObjectWithMouse(GameObjects, SelectedObject);
-        SelectHitboxWithMouse(SelectedObject, HitboxFocus);
-  
-        
-        std::cout << SelectedObject->RenderQueue << std::endl;
-        
-        if (SelectedObject->ShouldObjectOrHitboxMove) SelectedObject->MoveObject(IncreaseValue);
-        else SelectedObject->MoveHitbox(IncreaseValue,HitboxFocus);
 
-        DrawObjects(GameObjects);
-        DrawHitboxs(GameObjects, SelectedObject);
+
+        if (SelectedObject->ShouldObjectOrHitboxMove)
+        {
+            SelectObjectWithMouse(GameObjects, SelectedObject);
+            SelectedObject->MoveObject(SelectedObject->MoveValue);
+        
+        }
+        else
+        {
+            SelectHitboxWithMouse(SelectedObject, SelectedObject->Hitbox.HitboxFocus);
+            SelectedObject->MoveHitbox(SelectedObject->MoveValue, SelectedObject->Hitbox.HitboxFocus);
+        
+        }
+
+
+        ImGui::GeneralMenu(GameObjects, SelectedObject, WarningLevel);
+        ImGui::ObjectMenu(GameObjects, SelectedObject);
         
 
         rlImGuiEnd();
-        
         EndDrawing();
-
 
     }
 

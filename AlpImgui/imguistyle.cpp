@@ -5,16 +5,15 @@
 
 
 
-void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,bool Sameline)
+void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,bool sameline)
 {
     
-    static bool temp = !active;
-    
-    
-
+     
+   
+    static bool temp = !active;   
     ImGui::Checkbox(str_id1, &active);
     if (active) temp = false;
-    if (SameLine) ImGui::SameLine();
+    if (sameline) ImGui::SameLine();
     ImGui::Checkbox(str_id2, &temp);
     if (temp) active = false;
     
@@ -27,14 +26,37 @@ void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,boo
 
 void ImGui::TextureMenu(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject)
 {
-
-
-    
-    
+   
 
     
-    
+    ImGui::Spacing();
+    ImGui::Text("IncreaseValue = %d",SelectedObject->MoveValue);
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("IncreaseLeft", ImGuiDir_Left) && SelectedObject->MoveValue != 1) { SelectedObject->MoveValue--; }
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("IncreaseRight", ImGuiDir_Right) && SelectedObject->MoveValue != 5) { SelectedObject->MoveValue++; }
+    ImGui::Separator();    
     ImGui::TextureInfo(SelectedObject);
+    ImGui::Text("RenderQueue = %d", SelectedObject->RenderQueue);
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("RenderLeft", ImGuiDir_Left))
+    {
+        IncreaseRenderQueue(objects,SelectedObject);
+    }
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("RenderRight", ImGuiDir_Right))
+    {
+        DecreaseRenderQueue(objects, SelectedObject);
+    }
+    ImGui::SameLine();
+    static bool renderqueue = false;
+    if(ImGui::Checkbox("Show\nQueue",&renderqueue))
+    {
+        
+    }
+
+
+
 
 
 
@@ -58,40 +80,74 @@ void ImGui::GeneralMenu(std::map<std::string, GameObject>& GameObjects, GameObje
             }
             ImGui::EndCombo();
         }
-        static bool ShouldObjectCreated = false;
-        if ((ImGui::Button("Add Objects") || ShouldObjectCreated))
+        static bool ShouldObjectCreated = false;  
+        static bool ShouldObjectDeleted = false;
+        static bool AddObjectButton = false;
+        if(ImGui::Button("Add Objects"))
         {
-            WarningLevel = CreateNewObject(ShouldObjectCreated, GameObjects);
+            AddObjectButton = true;
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Delete Objects") || ShouldObjectDeleted)
+        {
+            WarningLevel = DeleteSelectedObject(GameObjects,SelectedObject ,ShouldObjectDeleted);
         }
 
+        if (AddObjectButton || ShouldObjectCreated)
+        {
+            WarningLevel = CreateNewObject(ShouldObjectCreated, GameObjects);
+            AddObjectButton = false;
+        }
 
+        ImGui::Separator();
+        static bool ShowAllHitboxs = false;
+        ImGui::Checkbox("Show Hitboxs", &ShowAllHitboxs);  
+        
+        DrawObjects(GameObjects);
+        DrawHitboxs(GameObjects, SelectedObject, ShowAllHitboxs);
         ImGui::End();
     }
+
+
 }
+
 
 void ImGui::HitboxMenu(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject)
 {
+    
+    static std::string name_RecSelector = "rec";
+    
     ImGui::Checkbox("Show Hitbox", &SelectedObject->ShouldHitboxDisplay);
     ImGui::SameLine();
     if (ImGui::Button("Reset Hitbox")) SelectedObject->ResetHitbox();
-    //ImGui::SameLine();
+    ImGui::Spacing();
+    ImGui::Text("IncreaseValue = %d", SelectedObject->MoveValue);
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("left", ImGuiDir_Left) && SelectedObject->MoveValue != 1) { SelectedObject->MoveValue--; }
+    ImGui::SameLine();
+    if (ImGui::ArrowButton("right", ImGuiDir_Right) && SelectedObject->MoveValue != 5) { SelectedObject->MoveValue++; }
+    
+    
+    
     if (ImGui::Button("Add Rec"))
-    {
         SelectedObject->Hitbox.recs.push_back(Rectanglex(numbers(SelectedObject->Hitbox.recs.size()), 400, 200, SelectedObject->Texture.width, SelectedObject->Texture.height));
-    }
+    
 
-    static std::string name_RecSelector = "rec";
+   
+    
     if (!SelectedObject->Hitbox.recs.empty() && ImGui::BeginMenu(name_RecSelector.c_str()))
     {
         for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
         {
             if (ImGui::MenuItem(toString(SelectedObject->Hitbox.recs[i].name)))
             {
-                name_RecSelector = toString(SelectedObject->Hitbox.recs[i].name);
+                SelectedObject->Hitbox.HitboxFocus = SelectedObject->Hitbox.recs[i].name;
             }
         }
+        name_RecSelector = toString(SelectedObject->Hitbox.recs[SelectedObject->Hitbox.HitboxFocus].name);
         ImGui::EndMenu();
     }
+    std::cout << name_RecSelector << std::endl;
 
 }
 
@@ -118,22 +174,25 @@ void ImGui::ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& 
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::SmallButton("Texture"))
-            {
                 menu = TextureMenu;
-            }
+            
             if (ImGui::SmallButton("Hitboxs"))
-            {
                 menu = HitboxMenu;
-            }
+            
             ImGui::EndMenuBar();
         }
         ImGui::Text("Move :>");
         ImGui::SameLine();
-        ImGui::SwitchBox("Object", "Hitbox", SelectedObject->ShouldObjectOrHitboxMove);
+       
+        if(SelectedObject != nullptr)
+            ImGui::SwitchBox("Object", "Hitbox", SelectedObject->ShouldObjectOrHitboxMove);
+        
+        
         for (auto& object : objects)
         {
             object.second.ShouldObjectOrHitboxMove = SelectedObject->ShouldObjectOrHitboxMove;
         }
+        
         switch (menu)
         {
         case TextureMenu: 
@@ -151,8 +210,7 @@ void ImGui::ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& 
         }
 
         
-
-
+        
         ObjectMenuWindowSize = ImGui::GetWindowSize();
         ImGui::End();
     }
@@ -177,8 +235,19 @@ void ImGui::TextureInfo(GameObject*& SelectedObject)
     ImGui::SliderFloat(" = Scale", &SelectedObject->Data.TextureScale, 0.5f, 3.0f,"%.1f",ImGuiInputTextFlags_ReadOnly);
     SelectedObject->UpdateTextureSize();
     
+   
+
+
     
-    
+  
+}
+
+void ImGui::HitboxInfo(GameObject*& SelectedObject)
+{
+   
+
+
+
 }
 
 

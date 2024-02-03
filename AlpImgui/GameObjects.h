@@ -15,7 +15,7 @@
 enum numbers { first, second, third, fourth, fifth };
 
 const char* toString(numbers name);
-
+static int Iterator = 1;
 
 //enum Focus { Hitboxs, Objects, SelectedHitbox, SelectedObject };
 
@@ -97,8 +97,9 @@ public:
 	
 	ObjectData()
 	{
-		
-	}
+
+	};
+	
 
 };
 
@@ -111,7 +112,8 @@ public:
 	std::vector<Triangle> triangles;
 	bool Locked = false;
 	bool ShowAllHitboxs = true;
-
+	numbers HitboxFocus;
+	
 
 };
 
@@ -120,10 +122,11 @@ public:
 class GameObject
 {
 public:
-	GameObject();
-	GameObject(std::string name);
-	GameObject(char name);
+	 GameObject();
+	 GameObject(std::string name);
+	 GameObject(char name);
 	~GameObject();
+
 	std::string ObjectName;
 
 	ObjectData Data;
@@ -131,11 +134,12 @@ public:
 	Texture2D Texture;
 	unsigned int Id = 0;
 	int RenderQueue;
+	int MoveValue = 1;
 	bool ShouldHitboxDisplay = false;
 	bool ShouldObjectOrHitboxMove = true;
 	bool Locked;
 
-	void MoveHitbox(unsigned int value = 10,numbers name = first);
+	void MoveHitbox(unsigned int value = 10, numbers name = first);
 	void MoveObject(unsigned int value = 10);
 	void ResetHitbox();
 	void UpdateTextureSize();
@@ -164,15 +168,23 @@ public:
 
 };
 
+void IncreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
+void DecreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 
+void FixRenderQueue(std::map<std::string, GameObject>& objects);
+void CreateNullObject(std::map<std::string, GameObject>& objects);
+void DeleteNullObject(std::map<std::string, GameObject>& objects);
 void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll = true);
-void DrawHitboxs(const std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
+void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
 void SelectHitboxWithMouse(GameObject*& SelectedObject, numbers& HitboxFocus);
 void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer);
+void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 bool CollisionMouseWithRec(Vector2 mouse, ObjectData object, Texture2D Texture);
 bool CollisionMouseWithRec(Vector2 mouse, Rectanglex rec);
 void SetPrioarity(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 std::string  GetRelativePath(std::string TextureName);
 Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObject>& object);
+Enum_WarningStatus DeleteSelectedObject(std::map<std::string, GameObject>& objects,GameObject*& SelectedObject, bool &active);
+
 
 
