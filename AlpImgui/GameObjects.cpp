@@ -9,20 +9,18 @@ GameObject::GameObject(std::string name)
 {
 	this->ObjectName = name;
 	this->Data.pos = { 200,200 };
-	/*static int Iterator = 0;
-	this->RenderQueue = Iterator;
-	Id = Iterator;
-	Iterator++;*/
 	this->Locked = false;
-	//this->Data.OriginalTextureSize = { (float)this->Texture.width,(float)this->Texture.height };
+	
 	
 }
+
+
 
 GameObject::GameObject(char name)
 {
 	this->ObjectName = name;
 	this->Data.pos = { 200,200 };
-
+	
 }
 
 GameObject::~GameObject()
@@ -32,47 +30,119 @@ GameObject::~GameObject()
 	UnloadTexture(Texture);
 }
 
-void GameObject::MoveHitbox(unsigned int value, numbers name)
+void GameObject::MoveHitbox(struct_SelectedHitboxs Data, int value)
 {
-	if(!this->Hitbox.recs.empty())
-	{
-		if (IsKeyPressed(KEY_D)) this->Hitbox.recs[name].x += value;
-		else if (IsKeyPressed(KEY_A)) this->Hitbox.recs[name].x -= value;
-		else if (IsKeyPressed(KEY_W)) this->Hitbox.recs[name].y -= value;
-		else if (IsKeyPressed(KEY_S)) this->Hitbox.recs[name].y += value;
-		else if (IsKeyPressed(KEY_RIGHT)) this->Hitbox.recs[name].width += value;
-		else if (IsKeyPressed(KEY_LEFT)) this->Hitbox.recs[name].width -= value;
-		else if (IsKeyPressed(KEY_UP)) this->Hitbox.recs[name].height -= value;
-		else if (IsKeyPressed(KEY_DOWN)) this->Hitbox.recs[name].height += value;
 
-		static bool hold = false;
-		if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y }, this->Hitbox.recs[name]) || hold)
+	switch (Data.SelectedShape)
+	{
+
+	case  enum_Rectangle:
+	{
+		if (!this->Hitbox.recs.empty())
 		{
-			
-		
-			Vector2 mouse = { ImGui::GetMousePos().x,ImGui::GetMousePos().y };
-			static Vector2 HoldMousePosition = {};
-			static Vector2 HoldRecPosition = {};
-			
-			if (!hold)
+			if (IsKeyPressed(KEY_D)) this->Hitbox.recs[Data.SelectedHitbox].x += value;
+			else if (IsKeyPressed(KEY_A)) this->Hitbox.recs[Data.SelectedHitbox].x -= value;
+			else if (IsKeyPressed(KEY_W)) this->Hitbox.recs[Data.SelectedHitbox].y -= value;
+			else if (IsKeyPressed(KEY_S)) this->Hitbox.recs[Data.SelectedHitbox].y += value;
+			else if (IsKeyPressed(KEY_RIGHT)) this->Hitbox.recs[Data.SelectedHitbox].width += value;
+			else if (IsKeyPressed(KEY_LEFT)) this->Hitbox.recs[Data.SelectedHitbox].width -= value;
+			else if (IsKeyPressed(KEY_UP)) this->Hitbox.recs[Data.SelectedHitbox].height -= value;
+			else if (IsKeyPressed(KEY_DOWN)) this->Hitbox.recs[Data.SelectedHitbox].height += value;
+
+			static bool hold = false;
+			if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y }, this->Hitbox.recs[Data.SelectedHitbox]) || hold)
 			{
-				HoldMousePosition = mouse;
-				HoldRecPosition = { (float)Hitbox.recs[name].x, (float)Hitbox.recs[name].y };
+
+
+				Vector2 mouse = { ImGui::GetMousePos().x,ImGui::GetMousePos().y };
+				static Vector2 HoldMousePosition = {};
+				static Vector2 HoldRecPosition = {};
+
+				if (!hold)
+				{
+					HoldMousePosition = mouse;
+					HoldRecPosition = { (float)Hitbox.recs[Data.SelectedHitbox].x, (float)Hitbox.recs[Data.SelectedHitbox].y };
+				}
+
+				if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+				{
+					//std::cout << HoldPosition.x << std::endl;
+					this->Hitbox.recs[Data.SelectedHitbox].x = mouse.x - (HoldMousePosition.x - HoldRecPosition.x);
+					this->Hitbox.recs[Data.SelectedHitbox].y = mouse.y - (HoldMousePosition.y - HoldRecPosition.y);
+
+
+					hold = true;
+				}
+				else hold = false;
+
+
 			}
-			
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+
+
+			break;
+		}
+	}
+
+	case enum_Triangle:
+	{
+		if (!this->Hitbox.triangles.empty())
+		{
+			if (IsKeyPressed(KEY_D))
 			{
-				//std::cout << HoldPosition.x << std::endl;
-				this->Hitbox.recs[name].x = mouse.x - (HoldMousePosition.x - HoldRecPosition.x);
-				this->Hitbox.recs[name].y = mouse.y - (HoldMousePosition.y - HoldRecPosition.y);
-				hold = true;
+				this->Hitbox.triangles[Data.SelectedHitbox].v1.x += value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v2.x += value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v3.x += value;
+
 			}
-			else hold = false;
+
+			else if (IsKeyPressed(KEY_A))
+			{
+				this->Hitbox.triangles[Data.SelectedHitbox].v1.x -= value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v2.x -= value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v3.x -= value;
+			}
+			else if (IsKeyPressed(KEY_W))
+			{
+				this->Hitbox.triangles[Data.SelectedHitbox].v1.y -= value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v2.y -= value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v3.y -= value;
+
+			}
+			else if (IsKeyPressed(KEY_S))
+			{
+				this->Hitbox.triangles[Data.SelectedHitbox].v1.y += value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v2.y += value;
+				this->Hitbox.triangles[Data.SelectedHitbox].v3.y += value;
+
+			}
+
+			static bool hold = false;
+			if (CheckCollisionPointTriangle({ ImGui::GetMousePos().x,ImGui::GetMousePos().y }, this->Hitbox.triangles[Data.SelectedHitbox].v1, this->Hitbox.triangles[Data.SelectedHitbox].v2, this->Hitbox.triangles[Data.SelectedHitbox].v3) || hold)
+			{
+
+				std::cout << "collision" << std::endl;
+				if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+				{
+
+					this->Hitbox.triangles[Data.SelectedHitbox].v1.x += GetMouseDelta().x;
+					this->Hitbox.triangles[Data.SelectedHitbox].v1.y += GetMouseDelta().y;
+					this->Hitbox.triangles[Data.SelectedHitbox].v2.x += GetMouseDelta().x;
+					this->Hitbox.triangles[Data.SelectedHitbox].v2.y += GetMouseDelta().y;
+					this->Hitbox.triangles[Data.SelectedHitbox].v3.x += GetMouseDelta().x;
+					this->Hitbox.triangles[Data.SelectedHitbox].v3.y += GetMouseDelta().y;
+					hold = true;
+				}
+				else
+					hold = false;
+
+			}
 
 
 		}
+		break;
 	}
-	
+
+}
 
 
 }
@@ -83,12 +153,16 @@ bool CollisionMouseWithRec(Vector2 mouse,Rectanglex rec)
 	
 	return false;
 }
-bool CollisionMouseWithRec(Vector2 mouse, ObjectData object , Texture2D Texture)
+
+bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object , Texture2D Texture)
 {
 	if (mouse.x > object.pos.x && mouse.x < (object.pos.x + Texture.width) && mouse.y > object.pos.y && mouse.y < object.pos.y + Texture.height) return true;
 
 	return false;
 }
+
+
+
 
 void SetPrioarity(std::map<std::string, GameObject>& objects,GameObject* &SelectedObject)
 {
@@ -111,7 +185,7 @@ void SetPrioarity(std::map<std::string, GameObject>& objects,GameObject* &Select
 				}
 
 			}
-
+			
 		}
 		if(ImGui::IsKeyReleased(ImGuiKey_UpArrow))
 		{
@@ -162,9 +236,7 @@ void DecreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*
 {
 	if (SelectedObject->RenderQueue != objects.size() - 1)
 	{
-
 		SelectedObject->RenderQueue++;
-
 		for (auto& it : objects)
 		{
 			if ((it.second.ObjectName != SelectedObject->ObjectName) && (it.second.RenderQueue == SelectedObject->RenderQueue))
@@ -177,13 +249,6 @@ void DecreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*
 	}
 }
 
-void FixRenderQueue(std::map<std::string, GameObject>& objects)
-{
-	
-		
-
-}
-
 void CreateNullObject(std::map<std::string, GameObject>& objects)
 {
 		objects["NULL"] = GameObject("NULL");
@@ -191,7 +256,8 @@ void CreateNullObject(std::map<std::string, GameObject>& objects)
 
 void DeleteNullObject(std::map<std::string, GameObject>& objects)
 {
-	objects.erase("NULL");
+	if (objects.find("NULL") != objects.end())
+		objects.erase("NULL");
 }
 
 void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll)
@@ -225,6 +291,13 @@ void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& Select
 				DrawRectangleLinesEx(SelectedObject->Hitbox.recs[i].ConvertRec(), 1.0f, WHITE);
 			}
 		}
+		if (SelectedObject->ShouldHitboxDisplay)
+		{
+			for (int i = 0; i < SelectedObject->Hitbox.triangles.size(); i++)
+			{
+				DrawTriangleLines(SelectedObject->Hitbox.triangles[i].v1, SelectedObject->Hitbox.triangles[i].v2, SelectedObject->Hitbox.triangles[i].v3, WHITE);
+			}
+		}
 	}
 	else
 	{
@@ -240,18 +313,26 @@ void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& Select
 
 			}
 
+			if(!object.second.Hitbox.triangles.empty())
+			{
+				for (int i = 0; i < object.second.Hitbox.triangles.size(); i++)
+				{
+					DrawTriangleLines(object.second.Hitbox.triangles[i].v1, object.second.Hitbox.triangles[i].v2, object.second.Hitbox.triangles[i].v3, WHITE);
+				}
+			}
+
 		}
 	}
 	
 }
 
-void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject* &pointer)
+void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject* &pointer, Vector2 CameraOffset)
 {
 	if(IsKeyDown(KEY_LEFT_ALT) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 	{
 		for(auto& object : objects)
 		{
-			if (CollisionMouseWithRec(GetMousePosition(), object.second.Data, object.second.Texture))
+			if (CollisionMouseWithTexture({ GetMousePosition().x + CameraOffset.x , GetMousePosition().y + CameraOffset.y}, object.second.Data, object.second.Texture))
 			{
 				std::cout << "succecs" << std::endl;
 				pointer = &object.second;
@@ -260,34 +341,67 @@ void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject*
 	}		
 
 }
-int cmp1(std::pair<int, int> a, std::pair<int, int> b)
+
+void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject,bool ShowQueue)
 {
-	return a.first < b.first;
-}
-void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject)
-{
+	if (ShowQueue)
+	{
+		ImGui::Separator();
+		for (int i = 0; i < objects.size(); i++)
+		{
+			static int j = 0;
+			for (auto& object : objects)
+			{
+				if (object.second.RenderQueue == j)
+				{
+					
+					ImGui::Text("%s  =>  %d", object.second.ObjectName, object.second.RenderQueue);
+					j++;
+					break;
+				}
+			}
+			if (j > objects.size() - 1) j = 0;
+		}
+		ImGui::Separator();
+	}
+	else
+		return;
 	
 	 
 
-	
 }
-void SelectHitboxWithMouse(GameObject* &SelectedObject, numbers& HitboxFocus)
+
+
+void SelectHitboxWithMouse(GameObject* &SelectedObject)
 {
 	if (IsKeyDown(KEY_LEFT_ALT) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 	{
-		for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
+		
+		for (int i = 0; !SelectedObject->Hitbox.recs.empty(), i < SelectedObject->Hitbox.recs.size(); i++)
 		{
-			if (CollisionMouseWithRec(GetMousePosition(), SelectedObject->Hitbox.recs[i]))
+			if (CollisionMouseWithRec(GetMousePosition(),SelectedObject->Hitbox.recs[i]))
 			{
-				std::cout << "succecs" << std::endl;
-				HitboxFocus = SelectedObject->Hitbox.recs[i].name;
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Rectangle;
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.recs[i].name;
+				return;
 			}
 		}
+		
+		for (int i = 0; !SelectedObject->Hitbox.triangles.empty(), i < SelectedObject->Hitbox.triangles.size(); i++)
+		{
+			if (CheckCollisionPointTriangle(GetMousePosition(),SelectedObject->Hitbox.triangles[i].v1, SelectedObject->Hitbox.triangles[i].v2, SelectedObject->Hitbox.triangles[i].v3))
+			{
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Triangle;
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.triangles[i].name;
+				return;
+			}
+		}
+
+
+
 	}
 
 }
-
-
 
 
 void GameObject::MoveObject(unsigned int value)
@@ -298,30 +412,18 @@ void GameObject::MoveObject(unsigned int value)
 	else if (IsKeyDown(KEY_S)) Data.pos.y += value;
 	
 	static bool hold = false;
-	if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },Data,Texture) || hold)
+	if (CollisionMouseWithTexture({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },Data,Texture) || hold)
 	{
-
-
-		Vector2 mouse = { ImGui::GetMousePos().x,ImGui::GetMousePos().y };
-		static Vector2 HoldMousePosition = {};
-		static Vector2 HoldTexturePosition = {};
-
-		if (!hold)
-		{
-			HoldMousePosition = mouse;
-			HoldTexturePosition = { (float)Data.pos.x, (float)Data.pos.y };
-		}
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 		{
-			//std::cout << HoldPosition.x << std::endl;
-			Data.pos.x = mouse.x - (HoldMousePosition.x - HoldTexturePosition.x);
-			Data.pos.y = mouse.y - (HoldMousePosition.y - HoldTexturePosition.y);
+
+			Data.pos.x += GetMouseDelta().x;
+			Data.pos.y += GetMouseDelta().y;
 			hold = true;
 		}
-		else hold = false;
-
-
+		else
+			hold = false;
 	}
 	
 }
@@ -347,40 +449,96 @@ std::string GetRelativePath(std::string TextureName)
 			WorkingDir.at(i) = '/';
 		}
 	}
-	 std::string TexturePath(WorkingDir + "/Textures/" + TextureName + ".png");
+	 std::string TexturePath(WorkingDir + "/Textures/" + TextureName);
 	 return TexturePath;
 }
+std::string GetRelativePath()
+{
+	std::string WorkingDir(GetWorkingDirectory());
+
+	for (size_t i = 0; i < WorkingDir.size(); i++)
+	{
+		if (WorkingDir.at(i) == '\\') {
+			WorkingDir.at(i) = '/';
+		}
+	}
+	std::string TexturePath(WorkingDir + "/Textures/");
+	return TexturePath;
+}
+
+std::vector<std::pair<std::string, std::string>> ReadMultipleFilesFromDirectory(const char* FilePathToDirectory)
+{
+
+	std::vector<std::pair<std::string, std::string>> result;
+	std::string path = FilePathToDirectory;
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+	{
+		std::string PathDirect = entry.path().generic_string().c_str();
+		if (IsFileExtension(PathDirect.c_str(), ".png"))
+		{
+			std::string PathName;
+			if (PathDirect.find('/') != std::string::npos)
+			{
+				PathName = strrchr(PathDirect.c_str(), '/') + 1;
+			}
+			else if (PathDirect.find('\\') != std::string::npos)
+			{
+				PathName = strrchr(PathDirect.c_str(), '\\') + 1;
+			}
+			result.push_back({ PathName,entry.path().generic_string().c_str() });
+		}
+		else
+			std::cout << "failed!!!!!!!!" << std::endl;
+
+	}
+
+	return result;
+
+}
+
+
 
 Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObject>& object)
 {
 	
 	active = true;
-	
 	static char ObjectName[20] = {};
-	static char TextureName[20] = {};
 	ImGui::InputText("Object Name", ObjectName, IM_ARRAYSIZE(ObjectName));
-	ImGui::InputText("Texture Name", TextureName, IM_ARRAYSIZE(TextureName));
-	std::string TexturePath = GetRelativePath(TextureName);
+	auto Textures = ReadMultipleFilesFromDirectory(GetRelativePath().c_str());
 	
+	static std::string TextureName = "Textures";
+	static std::string TexturePath;
+	
+	if(ImGui::BeginCombo("Textures",TextureName.c_str()))
+	{
+		for (size_t i = 0; i < Textures.size(); i++)
+		{
+			if (ImGui::Selectable(Textures[i].first.c_str()))
+			{
+				TexturePath = Textures[i].second;
+				TextureName = Textures[i].first;
+			}
 
+		}
+		ImGui::EndCombo();
+	}
+	
+	
 	
 	if(ImGui::Button("Create"))
 	{
 		
+		std::cout << TextureName << " :: " << TexturePath << std::endl;
 		if(object.find(ObjectName) == object.end())
 		{
 			object[ObjectName] = GameObject(ObjectName);
-			if(TextureName[0] == '\0')
-				object[ObjectName].Texture = LoadTexture(GetRelativePath(ObjectName).c_str());
-			
-			else
-				object[ObjectName].Texture = LoadTexture(TexturePath.c_str());
+			object[ObjectName].Texture = LoadTexture(TexturePath.c_str());
 			
 			if (!IsTextureReady(object[ObjectName].Texture))
 			{	
 				object.erase(ObjectName);
 				*ObjectName = {};
-				*TextureName = {};
+				//*TextureName = {};
 				active = false;
 				return TextureFailed;
 			}
@@ -390,8 +548,7 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 				object[ObjectName].RenderQueue = Iterator;
 				Iterator++;
 				active = false;
-				if (object.find("NULL") != object.end())
-					DeleteNullObject(object);
+				DeleteNullObject(object);
 
 			}
 
@@ -400,13 +557,13 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 		{
 			std::cout << "object already created" << std::endl;
 			*ObjectName = {};
-			*TextureName = {};
+			//*TextureName = {};
 			active = false;
 			return ObjectCreatingFailed;
 			
 		}
 		*ObjectName = {};
-		*TextureName = {};
+		//*TextureName = {};
 		active = false;
 		return Succeed;
 		
@@ -416,7 +573,7 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 	if (ImGui::Button("Cancel")) 
 	{
 		*ObjectName = {};
-		*TextureName = {};
+		//*TextureName = {};
 		active = false;
 		return Succeed;
 		
@@ -424,9 +581,6 @@ Enum_WarningStatus CreateNewObject(bool& active, std::map<std::string, GameObjec
 	ImGui::Spacing();
 	return Succeed;
 
-
-	
-	
 }
 
 Enum_WarningStatus DeleteSelectedObject(std::map<std::string, GameObject>& objects,GameObject*& SelectedObject,bool &active)
@@ -499,6 +653,7 @@ Enum_WarningStatus DeleteSelectedObject(std::map<std::string, GameObject>& objec
 
 void GameObject::ShowHitbox(bool active)
 {
+
 }
 
 void GameObject::UpdateTextureSize()
@@ -509,7 +664,7 @@ void GameObject::UpdateTextureSize()
 
 }
 
-const char* toString(numbers name)
+std::string toString(numbers name)
 {
 	switch (name)
 	{

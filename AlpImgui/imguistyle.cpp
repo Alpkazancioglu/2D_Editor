@@ -7,19 +7,14 @@
 
 void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,bool sameline)
 {
-    
      
-   
     static bool temp = !active;   
     ImGui::Checkbox(str_id1, &active);
     if (active) temp = false;
     if (sameline) ImGui::SameLine();
     ImGui::Checkbox(str_id2, &temp);
     if (temp) active = false;
-    
-    
-    
-
+  
 }
 
 
@@ -27,8 +22,6 @@ void ImGui::SwitchBox(const char* str_id1,const char* str_id2,bool &active  ,boo
 void ImGui::TextureMenu(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject)
 {
    
-
-    
     ImGui::Spacing();
     ImGui::Text("IncreaseValue = %d",SelectedObject->MoveValue);
     ImGui::SameLine();
@@ -49,18 +42,13 @@ void ImGui::TextureMenu(std::map<std::string, GameObject>& objects, GameObject*&
         DecreaseRenderQueue(objects, SelectedObject);
     }
     ImGui::SameLine();
-    static bool renderqueue = false;
-    if(ImGui::Checkbox("Show\nQueue",&renderqueue))
-    {
-        
-    }
-
-
-
-
-
-
+    static bool ShowQueue = false;
+    ImGui::Checkbox("Show\nQueue", &ShowQueue);
+    ShowRenderQueue(objects, SelectedObject,ShowQueue);
+    
+    
 }
+
 
 void ImGui::GeneralMenu(std::map<std::string, GameObject>& GameObjects, GameObject*& SelectedObject ,Enum_WarningStatus &WarningLevel)
 {
@@ -99,12 +87,17 @@ void ImGui::GeneralMenu(std::map<std::string, GameObject>& GameObjects, GameObje
             AddObjectButton = false;
         }
 
+        static std::string TextureName = "Textures";
+        std::string TexturePath;
+       
+        
+        
+        
         ImGui::Separator();
         static bool ShowAllHitboxs = false;
         ImGui::Checkbox("Show Hitboxs", &ShowAllHitboxs);  
         
-        DrawObjects(GameObjects);
-        DrawHitboxs(GameObjects, SelectedObject, ShowAllHitboxs);
+        
         ImGui::End();
     }
 
@@ -116,6 +109,7 @@ void ImGui::HitboxMenu(std::map<std::string, GameObject>& objects, GameObject*& 
 {
     
     static std::string name_RecSelector = "rec";
+    static std::string name_TriSelector = "tri";
     
     ImGui::Checkbox("Show Hitbox", &SelectedObject->ShouldHitboxDisplay);
     ImGui::SameLine();
@@ -132,22 +126,45 @@ void ImGui::HitboxMenu(std::map<std::string, GameObject>& objects, GameObject*& 
     if (ImGui::Button("Add Rec"))
         SelectedObject->Hitbox.recs.push_back(Rectanglex(numbers(SelectedObject->Hitbox.recs.size()), 400, 200, SelectedObject->Texture.width, SelectedObject->Texture.height));
     
+    ImGui::SameLine();
+    if (ImGui::Button("Add Tri"))
+        SelectedObject->Hitbox.triangles.push_back(Triangle(numbers(SelectedObject->Hitbox.triangles.size()), { 200,200 }, { 400,200 }, { 300,100 }));
 
-   
     
-    if (!SelectedObject->Hitbox.recs.empty() && ImGui::BeginMenu(name_RecSelector.c_str()))
+    ImGui::Separator();
+    
+    if (ImGui::TreeNode("Hitboxs"))
     {
-        for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
+        if (!SelectedObject->Hitbox.recs.empty() && ImGui::TreeNode("Rectangle"))
         {
-            if (ImGui::MenuItem(toString(SelectedObject->Hitbox.recs[i].name)))
+            for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
             {
-                SelectedObject->Hitbox.HitboxFocus = SelectedObject->Hitbox.recs[i].name;
+                if (ImGui::Selectable(toString(SelectedObject->Hitbox.recs[i].name).c_str()))
+                {
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Rectangle;
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.recs[i].name;
+                }
             }
+            ImGui::TreePop();
         }
-        name_RecSelector = toString(SelectedObject->Hitbox.recs[SelectedObject->Hitbox.HitboxFocus].name);
-        ImGui::EndMenu();
+        ImGui::Spacing();
+        if (!SelectedObject->Hitbox.triangles.empty() && ImGui::TreeNode("Triangle"))
+        {
+            for (int i = 0; i < SelectedObject->Hitbox.triangles.size(); i++)
+            {
+                if (ImGui::Selectable(toString(SelectedObject->Hitbox.triangles[i].name).c_str()))
+                {
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Triangle;
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.triangles[i].name;
+                }
+            }
+            ImGui::TreePop();
+        }
+        
+        
+        ImGui::TreePop();
     }
-    std::cout << name_RecSelector << std::endl;
+    
 
 }
 
@@ -184,6 +201,9 @@ void ImGui::ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& 
         ImGui::Text("Move :>");
         ImGui::SameLine();
        
+        
+        
+        
         if(SelectedObject != nullptr)
             ImGui::SwitchBox("Object", "Hitbox", SelectedObject->ShouldObjectOrHitboxMove);
         
@@ -192,6 +212,10 @@ void ImGui::ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& 
         {
             object.second.ShouldObjectOrHitboxMove = SelectedObject->ShouldObjectOrHitboxMove;
         }
+        
+        
+        
+        
         
         switch (menu)
         {
@@ -203,6 +227,7 @@ void ImGui::ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& 
         case HitboxMenu:
         {
             ImGui::HitboxMenu(objects, SelectedObject);
+            ImGui::HitboxInfo(SelectedObject);
         }
             break;
         default:
@@ -235,16 +260,52 @@ void ImGui::TextureInfo(GameObject*& SelectedObject)
     ImGui::SliderFloat(" = Scale", &SelectedObject->Data.TextureScale, 0.5f, 3.0f,"%.1f",ImGuiInputTextFlags_ReadOnly);
     SelectedObject->UpdateTextureSize();
     
-   
-
-
-    
   
 }
 
+
+
+
+
 void ImGui::HitboxInfo(GameObject*& SelectedObject)
 {
-   
+    ImGui::Text("Hitbox");
+     
+    
+    switch (SelectedObject->Hitbox.SelectedHitboxs.SelectedShape)
+    {
+        case enum_Rectangle:
+        {
+            ImGui::PushItemWidth(40);
+            ImGui::InputInt(" = X", &SelectedObject->Hitbox.recs[HITBOXINDEX].x,0,0);
+            ImGui::SameLine(0,15);
+            ImGui::InputInt(" = Width", &SelectedObject->Hitbox.recs[HITBOXINDEX].width, 0, 0, ImGuiInputTextFlags_ReadOnly);
+            ImGui::InputInt(" = Y ", &SelectedObject->Hitbox.recs[HITBOXINDEX].y,0,0);
+            ImGui::SameLine();
+            ImGui::InputInt(" = Height ", &SelectedObject->Hitbox.recs[HITBOXINDEX].height,0,0);
+            //ImGui::PushItemWidth(132);
+            //ImGui::SliderFloat(" = Scale", &SelectedObject->Data.TextureScale, 0.5f, 3.0f, "%.1f", ImGuiInputTextFlags_ReadOnly);
+
+
+
+            break;
+        }
+        case enum_Triangle:
+        {
+            
+            
+            
+            break;
+        }
+        
+    
+    
+    
+    default:
+        break;
+    }
+
+
 
 
 

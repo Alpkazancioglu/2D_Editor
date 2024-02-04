@@ -8,13 +8,21 @@
 #include "WarningHandler.h"
 #include "rlgl.h"
 #include "raymath.h"
+#include <tuple>
+#include <filesystem>
+
+
 
 #define stringify( name ) #name
 #define PRINT_VARIABLE(x) std::cout << #x"=" << x << std::endl
+#define HITBOXINDEX SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox
+
 
 enum numbers { first, second, third, fourth, fifth };
+enum enum_SelectedShape { enum_Rectangle, enum_Triangle, enum_Circle };
 
-const char* toString(numbers name);
+
+std::string toString(numbers name);
 static int Iterator = 1;
 
 //enum Focus { Hitboxs, Objects, SelectedHitbox, SelectedObject };
@@ -30,6 +38,8 @@ struct Focus
 
 };
 
+
+
 struct Circle
 {
 	numbers name;
@@ -39,9 +49,26 @@ struct Circle
 
 struct Triangle
 {
+	Triangle(numbers name, Vector2 x, Vector2 y, Vector2 z)
+	{
+		this->name = name;
+		this->v1 = x;
+		this->v2 = y;
+		this->v3 = z;
+
+	}
+
 	numbers name;
-	Vector3 positions;
+
+	Vector2 v1;
+	Vector2 v2;
+	Vector2 v3;
+
+
+
 };
+
+
 class Rectanglex
 {
 public:
@@ -78,7 +105,7 @@ public:
 		rec.height = this->height;
 		return rec;
 	}
-
+	
 
 };
 
@@ -103,6 +130,17 @@ public:
 
 };
 
+struct struct_SelectedHitboxs
+{
+	
+	
+	enum_SelectedShape SelectedShape;
+	numbers SelectedHitbox;
+
+};
+
+
+
 class CollisionBoxs
 {
 public:
@@ -112,8 +150,7 @@ public:
 	std::vector<Triangle> triangles;
 	bool Locked = false;
 	bool ShowAllHitboxs = true;
-	numbers HitboxFocus;
-	
+	struct_SelectedHitboxs SelectedHitboxs;
 
 };
 
@@ -138,8 +175,9 @@ public:
 	bool ShouldHitboxDisplay = false;
 	bool ShouldObjectOrHitboxMove = true;
 	bool Locked;
-
-	void MoveHitbox(unsigned int value = 10, numbers name = first);
+	
+	
+	void MoveHitbox(struct_SelectedHitboxs Data, int value = 10);
 	void MoveObject(unsigned int value = 10);
 	void ResetHitbox();
 	void UpdateTextureSize();
@@ -171,15 +209,18 @@ public:
 void IncreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 void DecreaseRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 
-void FixRenderQueue(std::map<std::string, GameObject>& objects);
+
+
+std::vector<std::pair<std::string, std::string>> ReadMultipleFilesFromDirectory(const char* FilePathToDirectory);
+std::string GetRelativePath();
 void CreateNullObject(std::map<std::string, GameObject>& objects);
 void DeleteNullObject(std::map<std::string, GameObject>& objects);
 void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll = true);
 void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
-void SelectHitboxWithMouse(GameObject*& SelectedObject, numbers& HitboxFocus);
-void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer);
-void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
-bool CollisionMouseWithRec(Vector2 mouse, ObjectData object, Texture2D Texture);
+void SelectHitboxWithMouse(GameObject*& SelectedObject);
+void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer,Vector2 CameraOffset);
+void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject,bool ShowQueue);
+bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object, Texture2D Texture);
 bool CollisionMouseWithRec(Vector2 mouse, Rectanglex rec);
 void SetPrioarity(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 std::string  GetRelativePath(std::string TextureName);
