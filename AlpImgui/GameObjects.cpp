@@ -156,9 +156,9 @@ bool CollisionMouseWithRec(Vector2 mouse,Rectanglex rec)
 
 bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object , Texture2D Texture)
 {
-	if (mouse.x > object.pos.x && mouse.x < (object.pos.x + Texture.width) && mouse.y > object.pos.y && mouse.y < object.pos.y + Texture.height) return true;
-
-	return false;
+	//return mouse.x > object.pos.x && mouse.x < (object.pos.x + Texture.width) && mouse.y > object.pos.y && mouse.y < object.pos.y + Texture.height;
+	Vector2 ObjectScreenPos = object.ToScreenCoord();
+	return mouse.x > ObjectScreenPos.x && mouse.x < (ObjectScreenPos.x + Texture.width) && mouse.y > ObjectScreenPos.y && mouse.y < ObjectScreenPos.y + Texture.height;
 }
 
 
@@ -332,7 +332,7 @@ void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject*
 	{
 		for(auto& object : objects)
 		{
-			if (CollisionMouseWithTexture({ GetMousePosition().x + CameraOffset.x , GetMousePosition().y + CameraOffset.y}, object.second.Data, object.second.Texture))
+			if (CollisionMouseWithTexture({ GetMousePosition().x , GetMousePosition().y }, object.second.Data, object.second.Texture))
 			{
 				std::cout << "succecs" << std::endl;
 				pointer = &object.second;
@@ -417,15 +417,17 @@ void GameObject::MoveObject(unsigned int value)
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 		{
-
 			Data.pos.x += GetMouseDelta().x;
 			Data.pos.y += GetMouseDelta().y;
 			hold = true;
 		}
 		else
+		{
 			hold = false;
+		}
+		
 	}
-	
+	Data.IsMoving = hold;
 }
 
 void GameObject::ResetHitbox()
@@ -654,6 +656,14 @@ Enum_WarningStatus DeleteSelectedObject(std::map<std::string, GameObject>& objec
 void GameObject::ShowHitbox(bool active)
 {
 
+}
+
+Vector2 ObjectData::ToScreenCoord()
+{
+	Vector2 ScreenMidPoint = { (float)GetScreenWidth() / 2,(float)GetScreenHeight() / 2 };
+	Vector2 MidPointMouseDelta = { GetMouseX() - ScreenMidPoint.x , GetMouseY() - ScreenMidPoint.y };
+
+	return { pos.x - MidPointMouseDelta.x , pos.y - MidPointMouseDelta.y };
 }
 
 void GameObject::UpdateTextureSize()

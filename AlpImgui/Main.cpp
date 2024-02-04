@@ -15,87 +15,95 @@ int main()
 
 
 
-    const int screenWidth = 1200;
-    const int screenHeight = 800;
-   
-       
-    Enum_WarningStatus WarningLevel = Succeed;
-    
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+	const int screenWidth = 1200;
+	const int screenHeight = 800;
 
-    std::map<std::string, GameObject> GameObjects;
-    GameObject* SelectedObject;
-    
-    GameObjects["wood"] = GameObject("wood");
-    GameObjects["wood"].Texture = LoadTexture(GetRelativePath("wood.png").c_str());
-    GameObjects["wood"].Data.OriginalTextureSize = { (float)GameObjects["wood"].Texture.width,(float)GameObjects["wood"].Texture.height };
-    GameObjects["wood"].RenderQueue = 0;
-    
-    SelectedObject = &GameObjects["wood"];
-    
-    Camera2D camera;
-    camera.target = GetMousePosition();
-    camera.offset = { (float)GetMonitorWidth(GetCurrentMonitor()) / 2,(float)GetMonitorHeight(GetCurrentMonitor()) / 2 };
-    camera.zoom = 1.0f;
-    camera.rotation = 0.0f;
 
-    SetTargetFPS(60);
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
+	Enum_WarningStatus WarningLevel = Succeed;
 
-    rlImGuiSetup(true);
-    while (!WindowShouldClose())
-    {
+	InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-        BeginDrawing();
-        
-        
-        ClearBackground(GRAY);
-        rlImGuiBegin();
-        
-        Warning::WarningHandler(WarningLevel);
-        
-        
-        SetPrioarity(GameObjects, SelectedObject);
+	std::map<std::string, GameObject> GameObjects;
+	GameObject* SelectedObject;
 
-        if (SelectedObject->ShouldObjectOrHitboxMove)
-        {
-            SelectObjectWithMouse(GameObjects, SelectedObject,camera.offset);
-            SelectedObject->MoveObject(SelectedObject->MoveValue);
-        
-        }
-        else
-        {
-            SelectHitboxWithMouse(SelectedObject);
-            SelectedObject->MoveHitbox(SelectedObject->Hitbox.SelectedHitboxs, SelectedObject->MoveValue);
-        }
+	GameObjects["wood"] = GameObject("wood");
+	GameObjects["wood"].Texture = LoadTexture(GetRelativePath("wood.png").c_str());
+	GameObjects["wood"].Data.OriginalTextureSize = { (float)GameObjects["wood"].Texture.width,(float)GameObjects["wood"].Texture.height };
+	GameObjects["wood"].RenderQueue = 0;
 
-        
-        ImGui::GeneralMenu(GameObjects, SelectedObject, WarningLevel);
-        ImGui::ObjectMenu(GameObjects, SelectedObject);
-        BeginMode2D(camera);
-        DrawObjects(GameObjects);
-        DrawHitboxs(GameObjects, SelectedObject, false);
-        
-        camera.target.x += GetMouseDelta().x;
-        camera.target.y += GetMouseDelta().y;
+	SelectedObject = &GameObjects["wood"];
 
-        camera.offset = { (float)GetMonitorWidth(GetCurrentMonitor()) / 2,(float)GetMonitorHeight(GetCurrentMonitor()) / 2 };
-        std::cout << GetMousePosition().x << " :: " << GetMousePosition().y << std::endl;
-        
-        EndMode2D();
+	Camera2D camera;
+	camera.target = GetMousePosition();
+	camera.offset = { (float)GetMonitorWidth(GetCurrentMonitor()) / 2,(float)GetMonitorHeight(GetCurrentMonitor()) / 2 };
+	camera.zoom = 1.0f;
+	camera.rotation = 0.0f;
 
-       
+	SetTargetFPS(60);
+	SetWindowState(FLAG_WINDOW_RESIZABLE);
 
-        rlImGuiEnd();
-        
-        EndDrawing();
-        
-    }
+	rlImGuiSetup(true);
+	while (!WindowShouldClose())
+	{
 
-    rlImGuiShutdown();
-    CloseWindow();
+		BeginDrawing();
 
-    return 0;
+
+		ClearBackground(GRAY);
+		rlImGuiBegin();
+
+		Warning::WarningHandler(WarningLevel);
+
+
+		SetPrioarity(GameObjects, SelectedObject);
+
+		if (SelectedObject->ShouldObjectOrHitboxMove)
+		{
+			SelectObjectWithMouse(GameObjects, SelectedObject, camera.offset);
+			SelectedObject->MoveObject(SelectedObject->MoveValue);
+
+		}
+		else
+		{
+			SelectHitboxWithMouse(SelectedObject);
+			SelectedObject->MoveHitbox(SelectedObject->Hitbox.SelectedHitboxs, SelectedObject->MoveValue);
+		}
+
+
+		ImGui::GeneralMenu(GameObjects, SelectedObject, WarningLevel);
+		ImGui::ObjectMenu(GameObjects, SelectedObject);
+		BeginMode2D(camera);
+		DrawObjects(GameObjects);
+		DrawHitboxs(GameObjects, SelectedObject, false);
+
+		Vector2 ScreenMidPoint = { (float)GetScreenWidth() / 2,(float)GetScreenHeight() / 2 };
+		Vector2 MidPointMouseDelta = { GetMouseX() - ScreenMidPoint.x , GetMouseY() - ScreenMidPoint.y };
+
+		if (!SelectedObject->Data.IsMoving)
+		{
+			camera.target.x = GetMousePosition().x;
+			camera.target.y = GetMousePosition().y;
+			camera.offset = ScreenMidPoint;
+		}
+		//camera.offset = { (float)GetMonitorWidth(GetCurrentMonitor()) / 2,(float)GetMonitorHeight(GetCurrentMonitor()) / 2 };
+		std::cout << "MOUSEPOS: " << GetMousePosition().x << " :: " << GetMousePosition().y << std::endl;
+		std::cout << "OFFSET: " << camera.offset.x << " :: " << camera.offset.y << std::endl;
+		std::cout << "OBJECT SCREEN POS: " << SelectedObject->Data.pos.x - MidPointMouseDelta.x << " :: "
+			<< SelectedObject->Data.pos.y - MidPointMouseDelta.y << std::endl;
+
+		EndMode2D();
+
+
+
+		rlImGuiEnd();
+
+		EndDrawing();
+	}
+
+	rlImGuiShutdown();
+	CloseWindow();
+
+	return 0;
 }
 
 

@@ -119,9 +119,11 @@ public:
 	Vector2 OriginalTextureSize;
 	float TextureScale = 1.0f;
 	float rotation = 0.0f;
+
+	bool IsMoving = false;
 	
-	
-	
+	Vector2 ToScreenCoord();
+
 	ObjectData()
 	{
 
