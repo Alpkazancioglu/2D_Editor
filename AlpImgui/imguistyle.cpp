@@ -141,7 +141,7 @@ void ImGui::HitboxMenu(std::map<std::string, GameObject>& objects, GameObject*& 
             {
                 if (ImGui::Selectable(toString(SelectedObject->Hitbox.recs[i].name).c_str()))
                 {
-                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Rectangle;
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = HitboxShape::Rectangle;
                     SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.recs[i].name;
                 }
             }
@@ -154,7 +154,7 @@ void ImGui::HitboxMenu(std::map<std::string, GameObject>& objects, GameObject*& 
             {
                 if (ImGui::Selectable(toString(SelectedObject->Hitbox.triangles[i].name).c_str()))
                 {
-                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Triangle;
+                    SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = HitboxShape::Triangle;
                     SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.triangles[i].name;
                 }
             }
@@ -274,7 +274,7 @@ void ImGui::HitboxInfo(GameObject*& SelectedObject)
     
     switch (SelectedObject->Hitbox.SelectedHitboxs.SelectedShape)
     {
-        case enum_Rectangle:
+        case HitboxShape::Rectangle:
         {
             ImGui::PushItemWidth(40);
             ImGui::InputInt(" = X", &SelectedObject->Hitbox.recs[HITBOXINDEX].x,0,0);
@@ -290,7 +290,7 @@ void ImGui::HitboxInfo(GameObject*& SelectedObject)
 
             break;
         }
-        case enum_Triangle:
+        case HitboxShape::Triangle:
         {
             
             
@@ -306,6 +306,13 @@ void ImGui::HitboxInfo(GameObject*& SelectedObject)
     }
 
 
+
+
+
+}
+
+void ImGui::CameraInfo(Camera2D camera)
+{
 
 
 

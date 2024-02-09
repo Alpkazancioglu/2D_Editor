@@ -30,14 +30,14 @@ GameObject::~GameObject()
 	UnloadTexture(Texture);
 }
 
-void GameObject::MoveHitbox(struct_SelectedHitboxs Data, int value)
+void GameObject::MoveHitbox(struct_SelectedHitboxs Data, Camera2D camera ,int value)
 {
 
 	switch (Data.SelectedShape)
 	{
 
-	case  enum_Rectangle:
-	{
+	case  HitboxShape::Rectangle:
+
 		if (!this->Hitbox.recs.empty())
 		{
 			if (IsKeyPressed(KEY_D)) this->Hitbox.recs[Data.SelectedHitbox].x += value;
@@ -50,41 +50,24 @@ void GameObject::MoveHitbox(struct_SelectedHitboxs Data, int value)
 			else if (IsKeyPressed(KEY_DOWN)) this->Hitbox.recs[Data.SelectedHitbox].height += value;
 
 			static bool hold = false;
-			if (CollisionMouseWithRec({ ImGui::GetMousePos().x,ImGui::GetMousePos().y }, this->Hitbox.recs[Data.SelectedHitbox]) || hold)
+			if (CollisionMouseWithRec(GetScreenToWorld2D(GetMousePosition(), camera), this->Hitbox.recs[Data.SelectedHitbox]) || hold)
 			{
-
-
-				Vector2 mouse = { ImGui::GetMousePos().x,ImGui::GetMousePos().y };
-				static Vector2 HoldMousePosition = {};
-				static Vector2 HoldRecPosition = {};
-
-				if (!hold)
-				{
-					HoldMousePosition = mouse;
-					HoldRecPosition = { (float)Hitbox.recs[Data.SelectedHitbox].x, (float)Hitbox.recs[Data.SelectedHitbox].y };
-				}
 
 				if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 				{
 					//std::cout << HoldPosition.x << std::endl;
-					this->Hitbox.recs[Data.SelectedHitbox].x = mouse.x - (HoldMousePosition.x - HoldRecPosition.x);
-					this->Hitbox.recs[Data.SelectedHitbox].y = mouse.y - (HoldMousePosition.y - HoldRecPosition.y);
-
-
+					this->Hitbox.recs[Data.SelectedHitbox].x += GetMouseDelta().x / camera.zoom;
+					this->Hitbox.recs[Data.SelectedHitbox].y += GetMouseDelta().y / camera.zoom;
 					hold = true;
 				}
 				else hold = false;
-
-
 			}
-
-
-			break;
 		}
-	}
+		break;
 
-	case enum_Triangle:
-	{
+
+	case HitboxShape::Triangle:
+
 		if (!this->Hitbox.triangles.empty())
 		{
 			if (IsKeyPressed(KEY_D))
@@ -117,50 +100,46 @@ void GameObject::MoveHitbox(struct_SelectedHitboxs Data, int value)
 			}
 
 			static bool hold = false;
-			if (CheckCollisionPointTriangle({ ImGui::GetMousePos().x,ImGui::GetMousePos().y }, this->Hitbox.triangles[Data.SelectedHitbox].v1, this->Hitbox.triangles[Data.SelectedHitbox].v2, this->Hitbox.triangles[Data.SelectedHitbox].v3) || hold)
+			if (CheckCollisionPointTriangle(GetScreenToWorld2D(GetMousePosition(),camera), this->Hitbox.triangles[Data.SelectedHitbox].v1, this->Hitbox.triangles[Data.SelectedHitbox].v2, this->Hitbox.triangles[Data.SelectedHitbox].v3) || hold)
 			{
 
 				std::cout << "collision" << std::endl;
 				if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 				{
 
-					this->Hitbox.triangles[Data.SelectedHitbox].v1.x += GetMouseDelta().x;
-					this->Hitbox.triangles[Data.SelectedHitbox].v1.y += GetMouseDelta().y;
-					this->Hitbox.triangles[Data.SelectedHitbox].v2.x += GetMouseDelta().x;
-					this->Hitbox.triangles[Data.SelectedHitbox].v2.y += GetMouseDelta().y;
-					this->Hitbox.triangles[Data.SelectedHitbox].v3.x += GetMouseDelta().x;
-					this->Hitbox.triangles[Data.SelectedHitbox].v3.y += GetMouseDelta().y;
+					this->Hitbox.triangles[Data.SelectedHitbox].v1.x += GetMouseDelta().x / camera.zoom;
+					this->Hitbox.triangles[Data.SelectedHitbox].v1.y += GetMouseDelta().y / camera.zoom;
+					this->Hitbox.triangles[Data.SelectedHitbox].v2.x += GetMouseDelta().x / camera.zoom;
+					this->Hitbox.triangles[Data.SelectedHitbox].v2.y += GetMouseDelta().y / camera.zoom;
+					this->Hitbox.triangles[Data.SelectedHitbox].v3.x += GetMouseDelta().x / camera.zoom;
+					this->Hitbox.triangles[Data.SelectedHitbox].v3.y += GetMouseDelta().y / camera.zoom;
 					hold = true;
+				
 				}
 				else
 					hold = false;
 
 			}
-
-
 		}
 		break;
-	}
 
-}
+
+	}
 
 
 }
 
 bool CollisionMouseWithRec(Vector2 mouse,Rectanglex rec)
 {
-	if (mouse.x > rec.x && mouse.x < (rec.x + rec.width) && mouse.y > rec.y && mouse.y < rec.y + rec.height) return true;
-	
-	return false;
+	return mouse.x > rec.x && mouse.x < (rec.x + rec.width) && mouse.y > rec.y && mouse.y < rec.y + rec.height;
 }
 
-bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object , Texture2D Texture)
+
+
+bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object, Texture2D Texture)
 {
-	//return mouse.x > object.pos.x && mouse.x < (object.pos.x + Texture.width) && mouse.y > object.pos.y && mouse.y < object.pos.y + Texture.height;
-	Vector2 ObjectScreenPos = object.ToScreenCoord();
-	return mouse.x > ObjectScreenPos.x && mouse.x < (ObjectScreenPos.x + Texture.width) && mouse.y > ObjectScreenPos.y && mouse.y < ObjectScreenPos.y + Texture.height;
+	return mouse.x > object.pos.x && mouse.x < (object.pos.x + Texture.width) && mouse.y > object.pos.y && mouse.y < object.pos.y + Texture.height;
 }
-
 
 
 
@@ -326,13 +305,13 @@ void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& Select
 	
 }
 
-void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject* &pointer, Vector2 CameraOffset)
+void SelectObjectWithMouse(std::map<std::string,GameObject>& objects,GameObject* &pointer,Camera2D camera)
 {
 	if(IsKeyDown(KEY_LEFT_ALT) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 	{
 		for(auto& object : objects)
 		{
-			if (CollisionMouseWithTexture({ GetMousePosition().x , GetMousePosition().y }, object.second.Data, object.second.Texture))
+			if (CollisionMouseWithTexture(GetScreenToWorld2D({ GetMousePosition().x , GetMousePosition().y },camera), object.second.Data, object.second.Texture))
 			{
 				std::cout << "succecs" << std::endl;
 				pointer = &object.second;
@@ -372,39 +351,37 @@ void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& Se
 }
 
 
-void SelectHitboxWithMouse(GameObject* &SelectedObject)
+void SelectHitboxWithMouse(GameObject*& SelectedObject, Camera2D camera)
 {
 	if (IsKeyDown(KEY_LEFT_ALT) && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 	{
-		
-		for (int i = 0; !SelectedObject->Hitbox.recs.empty(), i < SelectedObject->Hitbox.recs.size(); i++)
+
+		for (int i = 0; i < SelectedObject->Hitbox.recs.size(); i++)
 		{
-			if (CollisionMouseWithRec(GetMousePosition(),SelectedObject->Hitbox.recs[i]))
+			if (CollisionMouseWithRec(GetScreenToWorld2D(GetMousePosition(), camera), SelectedObject->Hitbox.recs[i]))
 			{
-				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Rectangle;
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = HitboxShape::Rectangle;
 				SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.recs[i].name;
 				return;
 			}
 		}
-		
-		for (int i = 0; !SelectedObject->Hitbox.triangles.empty(), i < SelectedObject->Hitbox.triangles.size(); i++)
+
+		for (int i = 0; i < SelectedObject->Hitbox.triangles.size(); i++)
 		{
-			if (CheckCollisionPointTriangle(GetMousePosition(),SelectedObject->Hitbox.triangles[i].v1, SelectedObject->Hitbox.triangles[i].v2, SelectedObject->Hitbox.triangles[i].v3))
+			if (CheckCollisionPointTriangle(GetScreenToWorld2D(GetMousePosition(), camera), SelectedObject->Hitbox.triangles[i].v1, SelectedObject->Hitbox.triangles[i].v2, SelectedObject->Hitbox.triangles[i].v3))
 			{
-				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = enum_Triangle;
+				SelectedObject->Hitbox.SelectedHitboxs.SelectedShape = HitboxShape::Triangle;
 				SelectedObject->Hitbox.SelectedHitboxs.SelectedHitbox = SelectedObject->Hitbox.triangles[i].name;
 				return;
 			}
 		}
-
-
 
 	}
 
 }
 
 
-void GameObject::MoveObject(unsigned int value)
+void GameObject::MoveObject(Camera2D camera,unsigned int value)
 {
 	if (IsKeyDown(KEY_D)) Data.pos.x += value;
 	else if (IsKeyDown(KEY_A)) Data.pos.x -= value;
@@ -412,14 +389,15 @@ void GameObject::MoveObject(unsigned int value)
 	else if (IsKeyDown(KEY_S)) Data.pos.y += value;
 	
 	static bool hold = false;
-	if (CollisionMouseWithTexture({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },Data,Texture) || hold)
+	if (CollisionMouseWithTexture(GetScreenToWorld2D({ ImGui::GetMousePos().x,ImGui::GetMousePos().y },camera),this->Data,this->Texture) || hold)
 	{
-
+		
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 		{
-			Data.pos.x += GetMouseDelta().x;
-			Data.pos.y += GetMouseDelta().y;
+			Data.pos.x += GetMouseDelta().x / camera.zoom;
+			Data.pos.y += GetMouseDelta().y / camera.zoom;
 			hold = true;
+			std::cout << "succecs\n";
 		}
 		else
 		{

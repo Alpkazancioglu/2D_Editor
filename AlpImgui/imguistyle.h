@@ -21,5 +21,8 @@ namespace ImGui
 	void ObjectMenu(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject);
 	void TextureInfo(GameObject*& SelectedObject);
 	void HitboxInfo(GameObject*& SelectedObject);
+	void CameraInfo(Camera2D camera);
+
+
 
 }

@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameObjects.cpp" />
     <ClCompile Include="imguistyle.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="WarningHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="imguistyle.h" />
     <ClInclude Include="json.hpp" />

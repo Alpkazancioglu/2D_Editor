@@ -19,7 +19,7 @@
 
 
 enum numbers { first, second, third, fourth, fifth };
-enum enum_SelectedShape { enum_Rectangle, enum_Triangle, enum_Circle };
+enum class HitboxShape { Rectangle, Triangle, Circle };
 
 
 std::string toString(numbers name);
@@ -136,7 +136,7 @@ struct struct_SelectedHitboxs
 {
 	
 	
-	enum_SelectedShape SelectedShape;
+	HitboxShape SelectedShape;
 	numbers SelectedHitbox;
 
 };
@@ -179,11 +179,14 @@ public:
 	bool Locked;
 	
 	
-	void MoveHitbox(struct_SelectedHitboxs Data, int value = 10);
-	void MoveObject(unsigned int value = 10);
+	void MoveHitbox(struct_SelectedHitboxs Data,Camera2D camera, int value = 10);
+	void MoveObject(Camera2D camera,unsigned int value = 10);
 	void ResetHitbox();
 	void UpdateTextureSize();
 	void ShowHitbox(bool active = false);
+	
+	
+	
 
 	/*bool operator>(const GameObject& other) const
 	{
@@ -219,8 +222,8 @@ void CreateNullObject(std::map<std::string, GameObject>& objects);
 void DeleteNullObject(std::map<std::string, GameObject>& objects);
 void DrawObjects(const std::map<std::string, GameObject>& objects,bool DrawAll = true);
 void DrawHitboxs(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject, bool DrawAll = false);
-void SelectHitboxWithMouse(GameObject*& SelectedObject);
-void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer,Vector2 CameraOffset);
+void SelectHitboxWithMouse(GameObject*& SelectedObject,Camera2D camera);
+void SelectObjectWithMouse(std::map<std::string, GameObject>& objects, GameObject*& pointer, Camera2D camera);
 void ShowRenderQueue(std::map<std::string, GameObject>& objects, GameObject*& SelectedObject,bool ShowQueue);
 bool CollisionMouseWithTexture(Vector2 mouse, ObjectData object, Texture2D Texture);
 bool CollisionMouseWithRec(Vector2 mouse, Rectanglex rec);
