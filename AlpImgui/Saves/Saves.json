@@ -1,0 +1,35 @@
+{
+    "background": {
+        "Texture": {
+            "RenderQueue": 0,
+            "TextureName": "Background.png",
+            "TextureScale": 1.0,
+            "pos": {
+                "x": -152.0,
+                "y": -201.0
+            }
+        }
+    },
+    "object0": {
+        "Texture": {
+            "RenderQueue": 1,
+            "TextureName": "knight.png",
+            "TextureScale": 3.0,
+            "pos": {
+                "x": -54.769195556640625,
+                "y": 579.6923217773438
+            }
+        }
+    },
+    "wood": {
+        "Texture": {
+            "RenderQueue": 2,
+            "TextureName": "wood.png",
+            "TextureScale": 1.0,
+            "pos": {
+                "x": 323.205322265625,
+                "y": 663.4616088867188
+            }
+        }
+    }
+}

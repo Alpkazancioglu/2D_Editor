@@ -1,0 +1,24 @@
+{
+    "background": {
+        "Texture": {
+            "RenderQueue": 0,
+            "TextureName": "Background.png",
+            "TextureScale": 1.0,
+            "pos": {
+                "x": -5.0,
+                "y": -59.0
+            }
+        }
+    },
+    "wood": {
+        "Texture": {
+            "RenderQueue": 1,
+            "TextureName": "wood.png",
+            "TextureScale": 1.0,
+            "pos": {
+                "x": 276.0,
+                "y": 289.0
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "wood": {
+        "Texture": {
+            "RenderQueue": 0,
+            "TextureName": "wood.png",
+            "TextureScale": 1.0,
+            "pos": {
+                "x": 200.0,
+                "y": 200.0
+            }
+        }
+    }
+}

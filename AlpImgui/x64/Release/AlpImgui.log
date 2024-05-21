@@ -1,0 +1,87 @@
+﻿  Camera.cpp
+  FileFunctions.cpp
+  GameObjects.cpp
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(104,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'GameObjects.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(105,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'GameObjects.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(106,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'GameObjects.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'GameObjects.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(59,68): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(60,68): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(415,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(416,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(600,74): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(601,75): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  imguistyle.cpp
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(104,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'imguistyle.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(105,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'imguistyle.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(106,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'imguistyle.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'imguistyle.cpp')
+  
+  Main.cpp
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(104,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(105,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(106,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+  SaveHandler.cpp
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(104,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'SaveHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(105,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'SaveHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(106,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'SaveHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'SaveHandler.cpp')
+  
+  VectorMath.cpp
+  WarningHandler.cpp
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(104,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'WarningHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(105,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'WarningHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(106,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'WarningHandler.cpp')
+  
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.h(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'WarningHandler.cpp')
+  
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\GameObjects.cpp(635): warning C4715: 'toString': not all control paths return a value
+  All 2236 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+rlImGui.lib(imgui_widgets.obj) : warning LNK4099: PDB '' was not found with 'rlImGui.lib(imgui_widgets.obj)' or at ''; linking object as if no debug info
+rlImGui.lib(imgui.obj) : warning LNK4099: PDB '' was not found with 'rlImGui.lib(imgui.obj)' or at ''; linking object as if no debug info
+rlImGui.lib(rlImGui.obj) : warning LNK4099: PDB '' was not found with 'rlImGui.lib(rlImGui.obj)' or at ''; linking object as if no debug info
+rlImGui.lib(imgui_draw.obj) : warning LNK4099: PDB '' was not found with 'rlImGui.lib(imgui_draw.obj)' or at ''; linking object as if no debug info
+rlImGui.lib(imgui_tables.obj) : warning LNK4099: PDB '' was not found with 'rlImGui.lib(imgui_tables.obj)' or at ''; linking object as if no debug info
+  AlpImgui.vcxproj -> C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\x64\Release\AlpImgui.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
