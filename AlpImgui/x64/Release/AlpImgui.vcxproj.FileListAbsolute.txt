@@ -1,1 +1,2 @@
 C:\Users\user\Downloads\2D_Editor-main\2D_Editor-main\AlpImgui\x64\Release\AlpImgui.vcxproj.Up2Date
+C:\Users\user\Desktop\main()\projects\2D_Editor\AlpImgui\x64\Release\AlpImgui.vcxproj.Up2Date

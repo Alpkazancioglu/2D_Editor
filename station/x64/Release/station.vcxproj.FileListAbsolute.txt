@@ -1,2 +1,0 @@
-C:\Users\user\Documents\GitHub\station\station\x64\Release\station.vcxproj.Up2Date
-C:\Users\user\Desktop\main()\projects\GroundStation\station\x64\Release\station.vcxproj.Up2Date
